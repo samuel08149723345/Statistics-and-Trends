@@ -1,22 +1,34 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
-df_ind = pd.read_csv("Indicator API.csv")
+indicator = pd.read_csv("Indicator API.csv")
+print(indicator)
+
+indicator.columns
+
+df_ind = indicator.drop(columns=['Unnamed: 4'])
 print(df_ind)
 
-df_country = pd.read_csv("Country API.csv")
+country = pd.read_csv("Country API.csv")
+print(country)
+
+country.columns
+
+df_country = country.drop(columns=['Unnamed: 5'])
 print(df_country)
 
 df_country.isna().sum()
 
 #Merging the Country and Indicators Dataframe as One single Dataframe
 #Merging is done using Concat
-df_all_api = pd.concat([df_country,df_ind], ignore_index=True)
-print(df_all_api)
+all_api = pd.concat([df_country,df_ind], ignore_index=True)
+print(all_api)
 
-df_all_api.head()
+all_api.columns
+
+df_all_api = all_api.drop(columns=['INDICATOR_CODE','INDICATOR_NAME','SOURCE_NOTE','SOURCE_ORGANIZATION'])
+print(df_all_api)
 
 #Structural shape of DataFrame
 df_all_api.shape
@@ -29,7 +41,9 @@ print(fill)
 
 groups = df_all_api.groupby(['IncomeGroup'])['Region','TableName'].sum()
 groups = groups.reset_index()
-groups
+print(groups)
+
+groups.describe()
 
 #Total regions under each incomeGroup
 IncomeGroup = df_all_api['IncomeGroup'].value_counts()
@@ -160,8 +174,12 @@ df = pd.DataFrame({'A': A,
 
 #Plotting a heatmap
 df_map = df.pivot_table(values='corrrelation_score',index='A',columns='B')
-sns.heatmap(df_map,annot=True)
-plt.savefig("Correlation heatmap.png")
+plt.figure()
+plt.imshow(df_map,cmap = 'autumn')
+plt.colorbar()
+plt.ylabel('Section A')
+plt.xlabel('Section B')
+plt.title("GDP CORRELATION HEATMAP")
 plt.show()
 
 
